@@ -124,7 +124,7 @@ class DataController {
       const { id } = req.params;
       const { category_id, tutor_id, title, description, price, duration, image } = req.body;
 
-      if (!id || isNaN(Number(id))) {
+      if ( isNaN(Number(id))) {
         res.status(400).json({
           success: false,
           message: 'Invalid ID parameter',
@@ -192,7 +192,7 @@ class DataController {
     try {
       const { id } = req.params;
 
-      if (!id || isNaN(Number(id))) {
+      if (isNaN(Number(id))) {
         res.status(400).json({
           success: false,
           message: 'Invalid ID parameter',

@@ -1,4 +1,6 @@
-import pool from '../config/db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 interface ModuleData {
   category_id: number;
@@ -17,8 +19,10 @@ class DataService {
    */
   static async getAllData(): Promise<any[]> {
     try {
-      const [rows] = await pool.execute('SELECT * FROM MODULES ORDER BY created_at DESC');
-      return rows as any[];
+      const courses = await prisma.course.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
+      return courses;
     } catch (error: any) {
       throw new Error(`Failed to fetch data: ${error.message}`);
     }
@@ -31,9 +35,10 @@ class DataService {
    */
   static async getDataById(id: number): Promise<any | null> {
     try {
-      const [rows] = await pool.execute('SELECT * FROM MODULES WHERE module_id = ?', [id]);
-      const result = rows as any[];
-      return result.length > 0 ? result[0] : null;
+      const course = await prisma.course.findUnique({
+        where: { id }
+      });
+      return course;
     } catch (error: any) {
       throw new Error(`Failed to fetch data by ID: ${error.message}`);
     }
@@ -52,9 +57,20 @@ class DataService {
         throw new Error('Invalid attribute');
       }
       
-      const query = `SELECT * FROM MODULES WHERE ${attribute} LIKE ? ORDER BY created_at DESC`;
-      const [rows] = await pool.execute(query, [`%${value}%`]);
-      return rows as any[];
+      const whereClause: any = {};
+      if (attribute === 'title') {
+        whereClause.title = { contains: value };
+      } else if (attribute === 'price') {
+        whereClause.price = value;
+      } else if (attribute === 'duration') {
+        whereClause.duration = value;
+      }
+      
+      const courses = await prisma.course.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' }
+      });
+      return courses;
     } catch (error: any) {
       throw new Error(`Failed to fetch data by attribute: ${error.message}`);
     }
@@ -68,10 +84,18 @@ class DataService {
   static async insertData(data: ModuleData): Promise<any> {
     try {
       const { category_id, tutor_id, title, description, price, duration, image } = data;
-      const query = 'INSERT INTO MODULES (category_id, tutor_id, title, description, price, duration, image) VALUES (?, ?, ?, ?, ?, ?, ?)';
-      const [result] = await pool.execute(query, [category_id, tutor_id, title, description, price, duration, image]);
-      
-      return await this.getDataById((result as any).insertId);
+      const course = await prisma.course.create({
+        data: {
+          categoryId: category_id,
+          tutorId: tutor_id,
+          title,
+          description,
+          price,
+          duration,
+          image
+        }
+      });
+      return course;
     } catch (error: any) {
       throw new Error(`Failed to insert data: ${error.message}`);
     }
@@ -86,15 +110,23 @@ class DataService {
   static async updateData(id: number, data: ModuleData): Promise<any | null> {
     try {
       const { category_id, tutor_id, title, description, price, duration, image } = data;
-      const query = 'UPDATE MODULES SET category_id = ?, tutor_id = ?, title = ?, description = ?, price = ?, duration = ?, image = ? WHERE module_id = ?';
-      const [result] = await pool.execute(query, [category_id, tutor_id, title, description, price, duration, image, id]);
-      
-      if ((result as any).affectedRows === 0) {
+      const course = await prisma.course.update({
+        where: { id },
+        data: {
+          categoryId: category_id,
+          tutorId: tutor_id,
+          title,
+          description,
+          price,
+          duration,
+          image
+        }
+      });
+      return course;
+    } catch (error: any) {
+      if (error.code === 'P2025') {
         return null;
       }
-      
-      return await this.getDataById(id);
-    } catch (error: any) {
       throw new Error(`Failed to update data: ${error.message}`);
     }
   }
@@ -106,9 +138,14 @@ class DataService {
    */
   static async deleteData(id: number): Promise<boolean> {
     try {
-      const [result] = await pool.execute('DELETE FROM MODULES WHERE module_id = ?', [id]);
-      return (result as any).affectedRows > 0;
+      await prisma.course.delete({
+        where: { id }
+      });
+      return true;
     } catch (error: any) {
+      if (error.code === 'P2025') {
+        return false;
+      }
       throw new Error(`Failed to delete data: ${error.message}`);
     }
   }
