@@ -24,11 +24,16 @@ export const register = async (req: Request<{}, ApiResponse, RegisterRequest>, r
 
     const user = await createUser({ fullname, email, password });
     
-    // For testing: show verification token in response instead of sending email
+    // Send verification email
+    console.log('📧 Attempting to send email to:', email);
+    console.log('🔑 Token:', user.verificationToken);
+    
     try {
       await sendVerificationEmail(email, user.verificationToken!);
-    } catch (emailError) {
-      console.log('Email service error, showing token for testing:', user.verificationToken);
+      console.log('✅ Email sent successfully to:', email);
+    } catch (emailError: any) {
+      console.log('❌ Email service error:', emailError.message);
+      console.log('🔗 Verification token for testing:', user.verificationToken);
     }
 
     res.status(201).json({

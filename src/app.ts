@@ -1,10 +1,12 @@
-import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+
+// Load environment variables FIRST
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+import express from 'express';
 import routes from './routes';
 import { errorHandler } from './middlewares/errorHandler';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

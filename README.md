@@ -1,22 +1,29 @@
 # Complete Authentication System with Course Management
 
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/your-collection-id)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.18+-lightgrey.svg)](https://expressjs.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-5.0+-2D3748.svg)](https://www.prisma.io/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1.svg)](https://www.mysql.com/)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-000000.svg)](https://jwt.io/)
+
 REST API untuk sistem autentikasi lengkap dan manajemen kursus menggunakan Node.js, Express.js, TypeScript, dan Prisma ORM.
 
 > **Note**: Semua testing dilakukan menggunakan Postman. Tidak ada automated testing files dalam project ini.
 
-## Features
+## 🚀 Features
 
-- ✅ Complete Authentication System (Register, Login, Email Verification)
-- ✅ JWT Token Authentication
-- ✅ Password Hashing with bcrypt
-- ✅ Email Verification System
-- ✅ Course Management
-- ✅ File Upload System
-- ✅ Input Validation
-- ✅ Error Handling
-- ✅ Consistent JSON Response Format
-- ✅ Environment Configuration
-- ✅ TypeScript Support
+- ✅ **Authentication System** - Complete register, login, email verification
+- ✅ **JWT Authentication** - Secure token-based authentication
+- ✅ **Password Security** - bcrypt hashing with salt
+- ✅ **Email Service** - NodeMailer integration
+- ✅ **Course Management** - Full CRUD operations
+- ✅ **File Upload** - Image upload with validation
+- ✅ **Input Validation** - express-validator middleware
+- ✅ **Error Handling** - Comprehensive error responses with codes
+- ✅ **TypeScript** - Full type safety
+- ✅ **Database ORM** - Prisma with MySQL
 
 ## Tech Stack
 
@@ -115,7 +122,7 @@ npm start
 **Request Body:**
 ```json
 {
-  "fullName": "John Doe",
+  "fullname": "John Doe",
   "email": "john@example.com",
   "phone": "08123456789",
   "password": "password123",
@@ -130,7 +137,7 @@ npm start
   "message": "Registration successful. Please check your email for verification.",
   "data": {
     "id": 1,
-    "fullName": "John Doe",
+    "fullname": "John Doe",
     "email": "john@example.com",
     "role": "student",
     "isVerified": false
@@ -155,7 +162,7 @@ npm start
   "data": {
     "user": {
       "id": 1,
-      "fullName": "John Doe",
+      "fullname": "John Doe",
       "email": "john@example.com",
       "role": "student"
     },
@@ -310,7 +317,7 @@ MAX_FILE_SIZE=5242880
 
 ### User Model
 - `id`: Auto-increment primary key
-- `fullName`: User's full name
+- `fullname`: User's full name
 - `email`: Unique email address
 - `phone`: Phone number (optional)
 - `password`: Hashed password
@@ -355,6 +362,15 @@ API menggunakan error codes yang spesifik untuk memudahkan debugging:
 
 ## Testing with Postman
 
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/your-collection-id)
+
+### Quick Setup:
+1. Click the "Run in Postman" button above to import the collection
+2. Set environment variable `baseUrl` to `http://localhost:3000`
+3. Start the server: `npm run dev`
+4. Run the requests in order
+
+### Manual Setup:
 1. Import collection atau buat request manual
 2. Set base URL: `http://localhost:3000`
 3. For protected routes, add Authorization header: `Bearer <your-jwt-token>`

@@ -3,9 +3,10 @@ import { Request, Response, NextFunction } from 'express';
 
 export const validateRegister = [
   body('fullname').notEmpty().withMessage('Fullname is required'),
-  body('username').isLength({ min: 3 }).withMessage('Username min 3 characters'),
   body('email').isEmail().withMessage('Valid email required'),
-  body('password').isLength({ min: 8 }).withMessage('Password min 8 characters')
+  body('password').isLength({ min: 6 }).withMessage('Password min 6 characters'),
+  body('phone').optional().isMobilePhone('any').withMessage('Valid phone number required'),
+  body('role').optional().isIn(['student', 'admin']).withMessage('Role must be student or admin')
 ];
 
 export const validateLogin = [
