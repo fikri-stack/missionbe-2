@@ -38,7 +38,58 @@ REST API untuk sistem autentikasi lengkap dan manajemen kursus menggunakan Node.
 - **File Upload**: Multer
 - **Validation**: express-validator
 
-## Installation
+## 🚀 Quick Start (Recommended - Using Docker)
+
+### Prerequisites
+- Docker Desktop atau Rancher Desktop
+- Git
+
+### Installation (3 Steps Only!)
+
+1. **Clone repository**
+```bash
+git clone <repository-url>
+cd missionbe10
+```
+
+2. **Copy environment file**
+```bash
+# Windows
+copy .env.rancher .env
+
+# Mac/Linux
+cp .env.rancher .env
+```
+
+3. **Run with Docker**
+```bash
+# Start containers (MySQL + App)
+docker-compose up -d
+
+# Wait 30 seconds, then setup database
+docker-compose exec app npx prisma db push
+
+# Test API
+curl http://localhost:3000/health
+```
+
+**Done!** API running at `http://localhost:3000` 🎉
+
+> 📖 **Detailed Guide**: See [QUICK-START.md](QUICK-START.md) for complete instructions
+
+---
+
+## 🛠️ Manual Installation (Without Docker)
+
+<details>
+<summary>Click to expand manual installation steps</summary>
+
+### Prerequisites
+- Node.js 18+
+- MySQL 8.0+
+- npm or yarn
+
+### Steps
 
 1. Clone repository
 ```bash
@@ -67,9 +118,6 @@ npx prisma generate
 
 # Push schema to database
 npx prisma db push
-
-# Or run migrations (if you have migration files)
-npx prisma migrate dev
 ```
 
 5. Run application
@@ -80,6 +128,8 @@ npm run dev
 # Production mode
 npm start
 ```
+
+</details>
 
 ## API Endpoints
 

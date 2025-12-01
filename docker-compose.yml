@@ -1,0 +1,63 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-edutech}
+      MYSQL_USER: ${MYSQL_USER:-edutech_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-edutech_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d
+    networks:
+      - edutech_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    labels:
+      - "io.rancher.container.pull_image=always"
+
+  # Node.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://${MYSQL_USER:-edutech_user}:${MYSQL_PASSWORD:-edutech_pass}@mysql:3306/${MYSQL_DATABASE:-edutech}
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-production}
+      - PORT=3000
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.gmail.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - UPLOAD_PATH=uploads
+      - MAX_FILE_SIZE=5242880
+    volumes:
+      - app_uploads:/app/uploads
+    depends_on:
+      - mysql
+    networks:
+      - edutech_network
+    labels:
+      - "io.rancher.container.pull_image=always"
+      - "traefik.enable=true"
+      - "traefik.http.routers.edutech.rule=Host(`edutech.local`)"
+      - "traefik.http.services.edutech.loadbalancer.server.port=3000"
+
+volumes:
+  mysql_data:
+  app_uploads:
+
+networks:
+  edutech_network:
+    driver: bridge
