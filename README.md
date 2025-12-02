@@ -41,8 +41,10 @@ REST API untuk sistem autentikasi lengkap dan manajemen kursus menggunakan Node.
 ## 🚀 Quick Start (Recommended - Using Docker)
 
 ### Prerequisites
-- Docker Desktop atau Rancher Desktop
+- **Docker Desktop** (Windows/Mac) ATAU **Rancher Desktop** (alternatif gratis)
 - Git
+
+> ⚠️ **Penting**: Anda WAJIB install salah satu Docker engine (Docker Desktop atau Rancher Desktop) untuk menggunakan metode ini. Jika tidak bisa install Docker, gunakan [Manual Installation](#️-manual-installation-without-docker).
 
 ### Installation (3 Steps Only!)
 
@@ -437,3 +439,141 @@ API menggunakan error codes yang spesifik untuk memudahkan debugging:
 6. **PUT** `/api/data/:id` - Update course (with token)
 7. **DELETE** `/api/data/:id` - Delete course (with token)
 8. **POST** `/api/upload` - Upload image file (with token)
+
+---
+
+## ❓ FAQ (Frequently Asked Questions)
+
+### 🐳 Apakah saya harus punya Docker Desktop?
+
+**Tidak harus Docker Desktop**, tapi Anda WAJIB punya salah satu Docker engine:
+
+**Pilihan 1: Docker Desktop** (Recommended)
+- Official dari Docker Inc.
+- User-friendly dengan GUI
+- Download: [docker.com](https://www.docker.com/products/docker-desktop/)
+- ⚠️ Butuh lisensi berbayar untuk perusahaan besar (>250 karyawan)
+
+**Pilihan 2: Rancher Desktop** (Alternatif Gratis)
+- Open source, gratis selamanya
+- Fitur sama dengan Docker Desktop
+- Download: [rancherdesktop.io](https://rancherdesktop.io/)
+- ✅ Cocok untuk personal & commercial use
+
+**Pilihan 3: Manual Installation** (Tanpa Docker)
+- Tidak perlu Docker sama sekali
+- Harus install Node.js + MySQL manual
+- Lebih ribet tapi tetap bisa jalan
+- Lihat panduan [Manual Installation](#️-manual-installation-without-docker)
+
+### 🔄 Perbedaan Docker Desktop vs Rancher Desktop?
+
+| Fitur | Docker Desktop | Rancher Desktop |
+|-------|----------------|------------------|
+| **Harga** | Gratis untuk personal, berbayar untuk enterprise | Gratis selamanya |
+| **Lisensi** | Proprietary | Open Source (Apache 2.0) |
+| **GUI** | ✅ Ada | ✅ Ada |
+| **Docker CLI** | ✅ Ada | ✅ Ada |
+| **Docker Compose** | ✅ Ada | ✅ Ada |
+| **Kubernetes** | ✅ Ada | ✅ Ada |
+| **Platform** | Windows, Mac, Linux | Windows, Mac, Linux |
+
+**Kesimpulan**: Keduanya bisa dipakai untuk project ini. Pilih sesuai kebutuhan.
+
+### 🚫 Saya tidak bisa install Docker, bagaimana?
+
+Jika laptop tidak support Docker atau ada kendala lain, gunakan **Manual Installation**:
+
+1. Install Node.js 18+ dari [nodejs.org](https://nodejs.org/)
+2. Install MySQL 8.0+ dari [mysql.com](https://www.mysql.com/)
+3. Ikuti panduan [Manual Installation](#️-manual-installation-without-docker) di atas
+
+**Kekurangan manual installation**:
+- ❌ Harus install & konfigurasi MySQL sendiri
+- ❌ Harus setup environment variables manual
+- ❌ Beda OS bisa beda masalah
+- ❌ Lebih banyak langkah setup
+
+### 🎯 Mana yang paling mudah?
+
+**Ranking dari termudah ke tersulit**:
+
+1. 🥇 **Docker Desktop/Rancher Desktop** - 3 langkah, langsung jalan
+2. 🥈 **Manual Installation** - 7+ langkah, butuh konfigurasi
+
+**Rekomendasi**: Pakai Docker (Desktop atau Rancher) untuk pengalaman terbaik.
+
+### 📦 Apa yang terjadi saat `docker-compose up`?
+
+Docker akan otomatis:
+1. ✅ Download MySQL 8.0 image (jika belum ada)
+2. ✅ Download Node.js 18 image (jika belum ada)
+3. ✅ Buat container MySQL dengan database `edutech`
+4. ✅ Buat container aplikasi Node.js
+5. ✅ Install semua dependencies (npm install)
+6. ✅ Connect aplikasi ke MySQL
+7. ✅ Jalankan aplikasi di port 3000
+
+**Semua otomatis, tanpa install apapun di laptop Anda!**
+
+### 🔧 Bagaimana cara stop aplikasi?
+
+**Dengan Docker**:
+```bash
+# Stop containers
+docker-compose down
+
+# Stop + hapus data
+docker-compose down -v
+```
+
+**Manual Installation**:
+```bash
+# Tekan Ctrl+C di terminal
+# Stop MySQL service manual
+```
+
+### 💾 Apakah data saya hilang saat restart?
+
+**Dengan Docker**: 
+- ✅ Data tersimpan di Docker volume
+- ✅ Aman saat restart container
+- ❌ Hilang jika run `docker-compose down -v`
+
+**Manual Installation**:
+- ✅ Data tersimpan di MySQL lokal
+- ✅ Aman selamanya
+
+### 🌐 Port 3000 sudah dipakai, bagaimana?
+
+Edit file `docker-compose.yml` atau `.env`:
+
+```yaml
+# docker-compose.yml
+ports:
+  - "8080:3000"  # Ganti 3000 jadi 8080
+```
+
+Atau edit `.env`:
+```env
+PORT=8080
+```
+
+### 🐛 Troubleshooting
+
+**Error: "Cannot connect to Docker daemon"**
+- ✅ Pastikan Docker Desktop/Rancher Desktop sudah running
+- ✅ Restart Docker Desktop/Rancher Desktop
+
+**Error: "Port 3306 already in use"**
+- ✅ Ada MySQL lokal yang jalan, stop dulu: `net stop mysql` (Windows)
+- ✅ Atau ganti port di `docker-compose.yml`
+
+**Error: "prisma db push failed"**
+- ✅ Tunggu 30-60 detik setelah `docker-compose up`
+- ✅ MySQL butuh waktu untuk ready
+- ✅ Coba lagi: `docker-compose exec app npx prisma db push`
+
+**Error: "npm install failed"**
+- ✅ Hapus `node_modules`: `docker-compose down -v`
+- ✅ Rebuild: `docker-compose up --build`
