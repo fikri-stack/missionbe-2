@@ -56,11 +56,11 @@ cd missionbe10
 
 2. **Copy environment file**
 ```bash
-# Windows
-copy .env.rancher .env
+# Windows (Docker Desktop atau Rancher Desktop)
+copy .env.docker .env
 
-# Mac/Linux
-cp .env.rancher .env
+# Mac/Linux (Docker Desktop atau Rancher Desktop)
+cp .env.docker .env
 ```
 
 3. **Run with Docker**
